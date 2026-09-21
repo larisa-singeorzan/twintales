@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TwinTales</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+  :root{
+    --green:#2F5233;
+    --green-light:#4C7A52;
+    --cream:#F4F1E8;
+    --gold:#E8B34C;
+    --text:#26251F;
+    --muted:#8A8672;
+    --card-border:#EDEBE1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);font-family:'Manrope',sans-serif;color:var(--text);}
+  .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--cream);display:flex;flex-direction:column;}
+
+  /* Top bar */
+  .topbar{background:var(--green);color:var(--cream);padding:20px 20px 26px;border-radius:0 0 24px 24px;}
+  .topbar-row{display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-family:'Fraunces',serif;font-weight:700;font-size:22px;}
+  .lang-switch{display:flex;gap:4px;}
+  .lang-btn{background:rgba(255,255,255,0.15);border:none;color:var(--cream);font-size:11px;font-weight:700;padding:6px 8px;border-radius:8px;cursor:pointer;font-family:'Manrope',sans-serif;}
+  .lang-btn.active{background:var(--gold);color:#3A2E0F;}
+  .theme-label{margin-top:16px;font-size:12px;color:#C9D9C6;letter-spacing:.04em;text-transform:uppercase;}
+  .theme-title{font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin-top:4px;}
+  .theme-desc{font-size:12px;color:#C9D9C6;margin-top:8px;line-height:1.5;}
+  .days-chip{display:inline-block;background:rgba(255,255,255,0.15);border-radius:20px;padding:6px 12px;font-size:11px;font-weight:600;margin-top:14px;}
+
+  /* Sections */
+  .section-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;padding:18px 20px 10px;}
+  .cards{padding:0 20px;display:flex;flex-direction:column;gap:12px;}
+
+  .card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04);border:1px solid var(--card-border);}
+  .card-head{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#EAF0E6;font-size:12px;font-weight:700;color:var(--green);}
+  .card-body{display:flex;gap:12px;padding:12px 14px;}
+  .media-box{width:72px;height:72px;border-radius:12px;background:var(--card-border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;}
+  .media-box img,.media-box video{width:100%;height:100%;object-fit:cover;}
+  .card-text{flex-grow:1;}
+  .card-desc{font-size:13px;line-height:1.4;}
+  .card-meta{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .meta-class{font-size:11px;color:var(--muted);}
+  .vote-btn{background:none;border:none;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--green-light);font-weight:600;cursor:pointer;font-family:'Manrope',sans-serif;padding:0;}
+
+  .link-archive{text-align:center;padding:6px 0 4px;}
+  .link-archive button{background:none;border:none;color:var(--green);font-size:12px;font-weight:700;text-decoration:underline;cursor:pointer;font-family:'Manrope',sans-serif;}
+
+  .bottom-action{padding:14px 20px 22px;background:#fff;border-top:1px solid var(--card-border);}
+  .btn-primary{width:100%;padding:14px;border-radius:14px;background:var(--green);color:var(--cream);font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:'Manrope',sans-serif;}
+
+  /* Modal (form + archive) */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:flex-end;justify-content:center;z-index:10;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:20px;}
+  .modal h2{font-family:'Fraunces',serif;margin:0 0 14px;font-size:19px;color:var(--green);}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;}
+  .field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--card-border);border-radius:10px;font-family:'Manrope',sans-serif;font-size:14px;}
+  .field textarea{resize:vertical;min-height:70px;}
+  .modal-close{background:none;border:none;font-size:14px;color:var(--muted);float:right;cursor:pointer;}
+  .archive-item{padding:12px 0;border-bottom:1px solid var(--card-border);}
+  .archive-item .theme{font-weight:700;font-size:13px;color:var(--green);}
+  .empty-msg{color:var(--muted);font-size:13px;padding:20px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="brand">TwinTales</div>
+      <div class="lang-switch" id="langSwitch"></div>
+    </div>
+    <div class="theme-label" data-t="titlu_sectiune"></div>
+    <div class="theme-title" id="themeTitle">...</div>
+    <div class="theme-desc" id="themeDesc"></div>
+    <div class="days-chip" id="daysChip"></div>
+  </div>
+
+  <div class="section-title" data-t="titlu_raspunsuri"></div>
+  <div class="cards" id="cardsContainer"></div>
+
+  <div class="link-archive">
+    <button id="openArchive" data-t="link_arhiva"></button>
+  </div>
+
+  <div style="flex-grow:1;"></div>
+
+  <div class="bottom-action">
+    <button class="btn-primary" id="openForm" data-t="buton_principal"></button>
+  </div>
+</div>
+
+<!-- Submit form modal -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+    <h2 data-t="buton_principal"></h2>
+    <div class="field">
+      <label data-t="camp_nume"></label>
+      <input type="text" id="fNume">
+    </div>
+    <div class="field">
+      <label data-t="camp_clasa"></label>
+      <input type="text" id="fClasa">
+    </div>
+    <div class="field">
+      <label data-t="camp_scoala"></label>
+      <select id="fScoala">
+        <option value="Romania">Romania</option>
+        <option value="Partener">Partener</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-t="camp_media"></label>
+      <input type="file" id="fMedia" accept="image/*,video/*">
+    </div>
+    <div class="field">
+      <label data-t="camp_descriere"></label>
+      <textarea id="fDescriere"></textarea>
+    </div>
+    <button class="btn-primary" id="submitForm" data-t="buton_trimite_form"></button>
+  </div>
+</div>
+
+<!-- Archive modal -->
+<div class="modal-overlay" id="archiveModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('archiveModal')">✕</button>
+    <h2 data-t="link_arhiva"></h2>
+    <div id="archiveList"></div>
+  </div>
+</div>
+
+<script>
+// ============ CONFIG ============
+var API_URL = 'https://script.google.com/macros/s/AKfycbzttM0X2tg8kVx_22owE_kn-rPEpZn33EXpDTBVv44LO5AvQV5_83hUlq9Yr_iDvovp/exec';
+
+// ============ FALLBACK TRANSLATIONS (used until Sheet data loads) ============
+var FALLBACK_T = {
+  titlu_sectiune: {RO:'Misterul lunii',EN:'Monthly Mystery',IT:'Mistero del mese',DE:'Monatsrätsel'},
+  titlu_raspunsuri: {RO:'Raspunsurile lunii, fata in fata',EN:"This month's answers, side by side",IT:'Le risposte del mese, a confronto',DE:'Antworten des Monats, im Vergleich'},
+  eticheta_voturi: {RO:'voturi',EN:'votes',IT:'voti',DE:'Stimmen'},
+  buton_principal: {RO:'Trimite raspunsul tau',EN:'Submit your answer',IT:'Invia la tua risposta',DE:'Antwort einreichen'},
+  link_arhiva: {RO:'Vezi arhiva completa',EN:'See full archive',IT:"Vedi l'archivio completo",DE:'Gesamtes Archiv ansehen'},
+  camp_nume: {RO:'Nume elev',EN:'Student name',IT:'Nome studente',DE:'Schülername'},
+  camp_clasa: {RO:'Clasa',EN:'Class',IT:'Classe',DE:'Klasse'},
+  camp_scoala: {RO:'Scoala',EN:'School',IT:'Scuola',DE:'Schule'},
+  camp_media: {RO:'Foto sau video',EN:'Photo or video',IT:'Foto o video',DE:'Foto oder Video'},
+  camp_descriere: {RO:'Descrie ce ai descoperit',EN:'Describe what you found',IT:'Descrivi cosa hai scoperto',DE:'Beschreibe, was du entdeckt hast'},
+  buton_trimite_form: {RO:'Trimite',EN:'Submit',IT:'Invia',DE:'Absenden'},
+  zile_ramase: {RO:'zile ramase',EN:'days left',IT:'giorni rimasti',DE:'Tage übrig'}
+};
+
+var LANGS = ['RO','EN','IT','DE'];
+var currentLang = 'RO';
+var TR = FALLBACK_T; // becomes Sheet-based dict once loaded
+var appData = {provocari:[],raspunsuri:[],voturi:[],traduceri:[]};
+
+// ============ HELPERS ============
+function t(key){
+  if (TR[key] && TR[key][currentLang]) return TR[key][currentLang];
+  return key;
+}
+
+function applyTranslations(){
+  document.querySelectorAll('[data-t]').forEach(function(el){
+    el.textContent = t(el.getAttribute('data-t'));
+  });
+}
+
+function renderLangSwitch(){
+  var box = document.getElementById('langSwitch');
+  box.innerHTML = '';
+  LANGS.forEach(function(l){
+    var b = document.createElement('button');
+    b.className = 'lang-btn' + (l === currentLang ? ' active' : '');
+    b.textContent = l;
+    b.onclick = function(){ currentLang = l; renderLangSwitch(); render(); };
+    box.appendChild(b);
+  });
+}
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ============ DATA LOAD ============
+function loadData(){
+  fetch(API_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      appData = data;
+      buildTranslationDict(data.traduceri);
+      render();
+    })
+    .catch(function(err){
+      console.error('Eroare la incarcarea datelor:', err);
+      document.getElementById('cardsContainer').innerHTML =
+        '<div class="empty-msg">Nu s-au putut incarca datele. Verifica legatura la Sheet.</div>';
+    });
+}
+
+function buildTranslationDict(rows){
+  if (!rows || !rows.length) return; // pastram fallback
+  var dict = {};
+  rows.forEach(function(row){
+    dict[row.Cheie] = {RO:row.RO, EN:row.EN, IT:row.IT, DE:row.DE};
+  });
+  TR = dict;
+}
+
+// ============ RENDER ============
+function getCurrentProvocare(){
+  if (!appData.provocari.length) return null;
+  // ia ultima provocare dupa Data_Start
+  return appData.provocari[appData.provocari.length - 1];
+}
+
+function daysLeft(dataLimita){
+  if (!dataLimita) return '';
+  var parts = String(dataLimita).split('.');
+  if (parts.length < 3) return '';
+  var target = new Date(parts[2], parts[1]-1, parts[0]);
+  var diff = Math.ceil((target - new Date()) / (1000*60*60*24));
+  return diff > 0 ? diff : 0;
+}
+
+function mediaIcon(tip){
+  return (tip && tip.toLowerCase().indexOf('video') > -1) ? '🎥' : '📷';
+}
+
+function render(){
+  applyTranslations();
+  var prov = getCurrentProvocare();
+  if (!prov){
+    document.getElementById('themeTitle').textContent = '—';
+    document.getElementById('cardsContainer').innerHTML = '<div class="empty-msg">Nicio provocare adaugata inca.</div>';
+    return;
+  }
+
+  document.getElementById('themeTitle').textContent = prov.Titlu_Tema || '';
+  document.getElementById('themeDesc').textContent = prov.Descriere || '';
+  var zile = daysLeft(prov.Data_Limita);
+  document.getElementById('daysChip').textContent = '⏳ ' + zile + ' ' + t('zile_ramase');
+
+  var raspunsuriLuna = appData.raspunsuri.filter(function(r){
+    return r.ID_Provocare === prov.ID_Provocare && r.Status !== 'Respins';
+  });
+
+  var cardsBox = document.getElementById('cardsContainer');
+  if (!raspunsuriLuna.length){
+    cardsBox.innerHTML = '<div class="empty-msg">Niciun raspuns trimis inca pentru aceasta luna.</div>';
+  } else {
+    cardsBox.innerHTML = raspunsuriLuna.map(function(r){
+      var voturi = appData.voturi.filter(function(v){ return v.ID_Raspuns === r.ID_Raspuns; }).length;
+      var flag = (r.Scoala_Autor || '').toLowerCase().indexOf('rom') > -1 ? '🇷🇴' : '🌍';
+      return '<div class="card">' +
+        '<div class="card-head">' + flag + ' ' + escapeHtml(r.Scoala_Autor || '') + '</div>' +
+        '<div class="card-body">' +
+          '<div class="media-box">' + mediaIcon(r.Tip_Media) + '</div>' +
+          '<div class="card-text">' +
+            '<div class="card-desc">' + escapeHtml(r.Descriere_Raspuns || '') + '</div>' +
+            '<div class="card-meta">' +
+              '<span class="meta-class">' + escapeHtml(r.Clasa || '') + '</span>' +
+              '<button class="vote-btn" onclick="vote(\'' + r.ID_Raspuns + '\')">👍 ' + voturi + ' ' + t('eticheta_voturi') + '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  renderArchive();
+}
+
+function renderArchive(){
+  var box = document.getElementById('archiveList');
+  if (!appData.provocari.length){
+    box.innerHTML = '<div class="empty-msg">Arhiva este goala.</div>';
+    return;
+  }
+  box.innerHTML = appData.provocari.map(function(prov){
+    var count = appData.raspunsuri.filter(function(r){ return r.ID_Provocare === prov.ID_Provocare; }).length;
+    return '<div class="archive-item">' +
+      '<div class="theme">' + escapeHtml(prov.Titlu_Tema || '') + '</div>' +
+      '<div style="font-size:12px;color:var(--muted);margin-top:2px;">' + escapeHtml(prov.Luna || '') + ' · ' + count + ' raspunsuri</div>' +
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(str){
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ============ ACTIONS ============
+function vote(idRaspuns){
+  var body = {
+    type: 'vot',
+    idRaspuns: idRaspuns,
+    votantNume: 'Anonim',
+    votantScoala: 'Necunoscuta',
+    scor: 1,
+    comentariu: ''
+  };
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(body)
+  }).then(function(){ loadData(); });
+}
+
+document.getElementById('openForm').onclick = function(){ openModal('formModal'); };
+document.getElementById('openArchive').onclick = function(){ openModal('archiveModal'); };
+
+document.getElementById('submitForm').onclick = function(){
+  var prov = getCurrentProvocare();
+  var fileInput = document.getElementById('fMedia');
+  var file = fileInput.files[0];
+
+  function send(mediaBase64, mediaFileName, tipMedia){
+    var body = {
+      type: 'raspuns',
+      idProvocare: prov ? prov.ID_Provocare : '',
+      numeElev: document.getElementById('fNume').value,
+      clasa: document.getElementById('fClasa').value,
+      scoalaAutor: document.getElementById('fScoala').value,
+      culturaCercetata: '',
+      tipMedia: tipMedia,
+      descriereRaspuns: document.getElementById('fDescriere').value,
+      mediaBase64: mediaBase64,
+      mediaFileName: mediaFileName
+    };
+    fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain;charset=utf-8'},
+      body: JSON.stringify(body)
+    }).then(function(){
+      closeModal('formModal');
+      loadData();
+    });
+  }
+
+  if (file){
+    var tip = file.type.indexOf('video') > -1 ? 'video' : 'foto';
+    var reader = new FileReader();
+    reader.onload = function(){ send(reader.result, file.name, tip); };
+    reader.readAsDataURL(file);
+  } else {
+    send('', '', '');
+  }
+};
+
+// ============ INIT ============
+renderLangSwitch();
+loadData();
+</script>
+</body>
+</html>
