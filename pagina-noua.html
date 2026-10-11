@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F3C88">
+<title>TwinTales</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 32'%3E%3Crect x='1' y='1' width='22' height='17' rx='8' fill='%23FFC83D'/%3E%3Crect x='13' y='8' width='22' height='17' rx='8' fill='%231F3C88'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D; --blue:#1F3C88; --blue-2:#2B4FB0; --sun:#FFC83D; --red:#D62839;
+    --sky:#EAF4FF; --paper:#FFFFFF; --muted:#55627F; --line:#D5E2F5;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--sky);color:var(--ink);font-family:'Nunito',system-ui,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.45}
+  h1,h2,h3{font-family:'Baloo 2','Nunito',system-ui,sans-serif;margin:0;line-height:1.1}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+  .wrap{width:min(1040px,100% - 32px);margin-inline:auto}
+
+  /* ---------- Hero ---------- */
+  .hero{background:var(--blue);color:#fff;border-radius:0 0 44px 44px;padding:16px 0 56px;position:relative;overflow:hidden}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Baloo 2',sans-serif;font-weight:800;font-size:26px;letter-spacing:.2px}
+  .lang{display:flex;gap:6px}
+  .lang button{border:none;background:rgba(255,255,255,.16);color:#fff;font-weight:800;font-size:13px;padding:7px 11px;border-radius:999px}
+  .lang button[aria-pressed="true"]{background:var(--sun);color:var(--ink)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;margin-top:20px}
+  .kicker{display:inline-block;background:var(--sun);color:var(--ink);font-weight:800;font-size:14px;padding:5px 13px;border-radius:999px;margin:0}
+  .hero h1{font-size:clamp(32px,6.2vw,52px);font-weight:800;margin:14px 0 10px}
+  .lead{font-size:18px;margin:0 0 8px;max-width:52ch}
+  .brief{font-size:15px;margin:0;color:#D3DDF6;max-width:58ch}
+  .deadline{display:flex;align-items:center;gap:12px;margin-top:20px;max-width:460px}
+  .chip{background:rgba(255,255,255,.16);padding:6px 13px;border-radius:999px;font-weight:800;font-size:14px;white-space:nowrap}
+  .bar{flex:1;height:10px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--sun);border-radius:999px;transition:width .9s ease .3s}
+  .hero-art svg{width:100%;height:auto;display:block}
+  .pop-in{transform-box:fill-box;transform-origin:center;animation:popin .7s cubic-bezier(.2,1.4,.4,1) both}
+  .d1{animation-delay:.1s}.d2{animation-delay:.3s}.d3{animation-delay:.5s}.d4{animation-delay:.7s}
+  @keyframes popin{from{transform:scale(0)}to{transform:scale(1)}}
+  @media (max-width:760px){
+    .hero{padding-bottom:48px}
+    .hero-grid{grid-template-columns:1fr;gap:6px}
+    .hero-art{order:-1;width:min(300px,80%);margin:0 auto}
+  }
+
+  /* ---------- Steps ---------- */
+  .steps{list-style:none;padding:0;margin:-30px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:2}
+  .step{background:var(--paper);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 22px rgba(20,33,61,.12);font-weight:600;font-size:15px}
+  .step b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--sun);color:var(--ink);display:grid;place-items:center;font-family:'Baloo 2',sans-serif;font-size:17px}
+  @media (max-width:760px){.steps{grid-template-columns:1fr;margin-top:-26px}.step{padding:10px 14px}}
+
+  /* ---------- Countries ---------- */
+  main{padding:30px 0 110px}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .section-head h2{font-size:26px;font-weight:800}
+  .link-btn{background:none;border:none;color:var(--blue);font-weight:800;font-size:15px;text-decoration:underline;padding:4px 0}
+  .countries{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;align-items:start}
+  .country{background:var(--paper);border-radius:22px;overflow:hidden;box-shadow:0 2px 0 rgba(20,33,61,.05),0 10px 26px rgba(20,33,61,.08)}
+  .stripe{height:9px}
+  .c-RO .stripe{background:linear-gradient(90deg,#002B7F 0 33.4%,#FCD116 33.4% 66.7%,#CE1126 66.7%)}
+  .c-IT .stripe{background:linear-gradient(90deg,#009246 0 33.4%,#E9EEF7 33.4% 66.7%,#CE2B37 66.7%)}
+  .c-DE .stripe{background:linear-gradient(90deg,#111 0 33.4%,#DD0000 33.4% 66.7%,#FFCE00 66.7%)}
+  .country-head{display:flex;align-items:center;gap:10px;padding:14px 16px 6px}
+  .country-head h3{font-size:22px;font-weight:800;flex:1}
+  .count{min-width:28px;height:28px;padding:0 8px;border-radius:999px;background:var(--sky);display:grid;place-items:center;font-weight:800;font-size:14px}
+  .flag{border-radius:4px;box-shadow:0 0 0 1px rgba(20,33,61,.18);display:block;flex:none}
+  .stories{display:flex;flex-direction:column;gap:12px;padding:8px 16px 16px}
+  .story{display:flex;gap:12px;padding:10px;border:2px solid var(--line);border-radius:16px}
+  .thumb{position:relative;flex:none;width:84px;height:84px;border-radius:12px;background:#E3EDFB;display:grid;place-items:center;font-size:26px;overflow:hidden;text-decoration:none}
+  .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .thumb.video::after{content:"";position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;background:rgba(20,33,61,.78) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7l8 5-8 5z' fill='white'/%3E%3C/svg%3E") center/16px no-repeat}
+  .story-body{min-width:0;flex:1}
+  .route{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-weight:600;flex-wrap:wrap}
+  .route svg.arrow{width:14px;height:14px}
+  .story-text{margin:5px 0 8px;font-size:14.5px;overflow-wrap:anywhere}
+  .vote{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:4px 12px 4px 9px;font-weight:800;font-size:14px}
+  .vote svg{width:18px;height:18px;fill:none;stroke:var(--red);stroke-width:2.2}
+  .vote[aria-pressed="true"]{background:#FFE6E9;border-color:#F4B4BB}
+  .vote[aria-pressed="true"] svg{fill:var(--red)}
+  .vote.pop svg{animation:heart .45s ease}
+  @keyframes heart{0%{transform:scale(1)}40%{transform:scale(1.4)}100%{transform:scale(1)}}
+  .empty{margin:8px 16px 18px;padding:18px 14px;border:2px dashed var(--line);border-radius:16px;text-align:center}
+  .empty .ico{font-size:28px}
+  .empty strong{display:block;margin-top:4px}
+  .empty span{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+  .panel{grid-column:1/-1;background:var(--paper);border-radius:22px;padding:28px 20px;text-align:center}
+  .panel strong{display:block;font-family:'Baloo 2',sans-serif;font-size:22px}
+  .panel p{margin:4px 0 14px;color:var(--muted)}
+  .skeleton{height:210px;border-radius:22px;background:linear-gradient(100deg,#F3F8FF 30%,#E3EDFB 50%,#F3F8FF 70%) 0 0/300% 100%;animation:shimmer 1.4s infinite linear}
+  @keyframes shimmer{to{background-position:-300% 0}}
+
+  /* ---------- CTA + modal ---------- */
+  .cta-bar{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--sky) 62%,rgba(234,244,255,0));text-align:center;pointer-events:none}
+  .cta{pointer-events:auto;width:min(440px,100%);border:none;border-radius:16px;background:var(--red);color:#fff;font-weight:800;font-size:18px;padding:15px 24px;box-shadow:0 10px 24px rgba(214,40,57,.35)}
+  .cta:active{transform:translateY(1px)}
+  .overlay{position:fixed;inset:0;background:rgba(20,33,61,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
+  .overlay.open{display:flex}
+  .sheet{background:#fff;width:min(520px,100%);max-height:90vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:20px}
+  @media (min-width:640px){.overlay{align-items:center}.sheet{border-radius:26px}}
+  .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .sheet-head h2{font-size:24px;font-weight:800}
+  .x{border:none;background:var(--sky);width:36px;height:36px;border-radius:50%;font-size:18px;color:var(--ink)}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-weight:800;font-size:14px;margin-bottom:4px}
+  .field input,.field select,.field textarea{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:12px;font:inherit;background:#fff;color:var(--ink)}
+  .field textarea{min-height:88px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .form-msg{color:var(--red);font-weight:700;min-height:22px;margin:0 0 8px}
+  .archive-item{padding:12px 0;border-bottom:1px solid var(--line)}
+  .archive-item strong{display:block}
+  .archive-item span{color:var(--muted);font-size:14px}
+  .toast{position:fixed;left:50%;top:16px;transform:translate(-50%,-140%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:14px;font-weight:700;z-index:30;max-width:min(92vw,460px);text-align:center;transition:transform .35s ease}
+  .toast.show{transform:translate(-50%,0)}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <svg width="36" height="32" viewBox="0 0 36 32" aria-hidden="true"><rect x="1" y="1" width="22" height="17" rx="8" fill="#FFC83D"/><path d="M6 17 L4 26 L13 18Z" fill="#FFC83D"/><rect x="13" y="8" width="22" height="17" rx="8" fill="#fff"/><path d="M30 24 L33 31 L24 25Z" fill="#fff"/></svg>
+        <span>TwinTales</span>
+      </div>
+      <nav class="lang" id="langSwitch" aria-label="Language"></nav>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-text">
+        <p class="kicker" data-t="titlu_sectiune"></p>
+        <h1 id="themeTitle"></h1>
+        <p class="lead" id="lead"></p>
+        <p class="brief" id="themeDesc"></p>
+        <div class="deadline" id="deadline" hidden>
+          <span class="chip" id="daysChip"></span>
+          <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 360 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="clipBadge"><circle r="30"/></clipPath>
+          </defs>
+          <circle cx="180" cy="132" r="120" fill="#2B4FB0" opacity=".55"/>
+          <path d="M70 72 Q180 14 290 72" fill="none" stroke="#FFC83D" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 9"/>
+          <path d="M290 72 Q304 192 180 224" fill="none" stroke="#FFC83D" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 9"/>
+          <path d="M180 224 Q56 192 70 72" fill="none" stroke="#FFC83D" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 9"/>
+
+          <g class="pop-in d1">
+            <g stroke="#FFC83D" stroke-width="5" stroke-linecap="round">
+              <line x1="180" y1="58" x2="180" y2="46"/><line x1="180" y1="206" x2="180" y2="218"/>
+              <line x1="106" y1="132" x2="94" y2="132"/><line x1="254" y1="132" x2="266" y2="132"/>
+              <line x1="128" y1="80" x2="120" y2="72"/><line x1="232" y1="80" x2="240" y2="72"/>
+              <line x1="128" y1="184" x2="120" y2="192"/><line x1="232" y1="184" x2="240" y2="192"/>
+            </g>
+            <circle cx="180" cy="132" r="56" fill="#FFC83D"/>
+            <text x="180" y="156" text-anchor="middle" font-family="'Baloo 2',sans-serif" font-weight="800" font-size="72" fill="#14213D">?</text>
+          </g>
+
+          <g transform="translate(70 72)"><g class="pop-in d2">
+            <circle r="35" fill="#fff"/>
+            <g clip-path="url(#clipBadge)"><rect x="-30" y="-30" width="20" height="60" fill="#002B7F"/><rect x="-10" y="-30" width="20" height="60" fill="#FCD116"/><rect x="10" y="-30" width="20" height="60" fill="#CE1126"/></g>
+          </g></g>
+          <g transform="translate(290 72)"><g class="pop-in d3">
+            <circle r="35" fill="#fff"/>
+            <g clip-path="url(#clipBadge)"><rect x="-30" y="-30" width="20" height="60" fill="#009246"/><rect x="-10" y="-30" width="20" height="60" fill="#FFFFFF"/><rect x="10" y="-30" width="20" height="60" fill="#CE2B37"/></g>
+          </g></g>
+          <g transform="translate(180 224)"><g class="pop-in d4">
+            <circle r="35" fill="#fff"/>
+            <g clip-path="url(#clipBadge)"><rect x="-30" y="-30" width="60" height="20" fill="#111"/><rect x="-30" y="-10" width="60" height="20" fill="#DD0000"/><rect x="-30" y="10" width="60" height="20" fill="#FFCE00"/></g>
+          </g></g>
+
+          <g fill="#fff"><path transform="translate(38 150)" d="M0 -9 L3 -3 L9 0 L3 3 L0 9 L-3 3 L-9 0 L-3 -3Z"/><path transform="translate(322 158)" d="M0 -7 L2.4 -2.4 L7 0 L2.4 2.4 L0 7 L-2.4 2.4 L-7 0 L-2.4 -2.4Z"/><path transform="translate(300 20)" d="M0 -6 L2 -2 L6 0 L2 2 L0 6 L-2 2 L-6 0 L-2 -2Z"/></g>
+          <circle cx="112" cy="20" r="5" fill="#D62839"/><circle cx="24" cy="98" r="4" fill="#1FA36A"/><circle cx="334" cy="112" r="5" fill="#FFC83D"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <ol class="steps">
+    <li class="step"><b>1</b><span data-t="pas1"></span></li>
+    <li class="step"><b>2</b><span data-t="pas2"></span></li>
+    <li class="step"><b>3</b><span data-t="pas3"></span></li>
+  </ol>
+</div>
+
+<main class="wrap">
+  <div class="section-head">
+    <h2 data-t="titlu_raspunsuri"></h2>
+    <button class="link-btn" id="openArchive" data-t="link_arhiva"></button>
+  </div>
+  <div class="countries" id="countries"></div>
+</main>
+
+<div class="cta-bar"><button class="cta" id="openForm" data-t="buton_principal"></button></div>
+
+<!-- Submit form -->
+<div class="overlay" id="formModal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 data-t="buton_principal"></h2>
+      <button class="x" data-close="formModal" data-t-aria="inchide">✕</button>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="fNume" data-t="camp_nume"></label><input id="fNume" type="text" autocomplete="off"></div>
+      <div class="field"><label for="fClasa" data-t="camp_clasa"></label><input id="fClasa" type="text" autocomplete="off"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="fScoala" data-t="camp_scoala"></label><select id="fScoala"></select></div>
+      <div class="field"><label for="fCultura" data-t="camp_despre"></label><select id="fCultura"></select></div>
+    </div>
+    <div class="field"><label for="fMedia" data-t="camp_media"></label><input id="fMedia" type="file" accept="image/*,video/*"></div>
+    <div class="field"><label for="fDescriere" data-t="camp_descriere"></label><textarea id="fDescriere"></textarea></div>
+    <p class="form-msg" id="formMsg" role="alert"></p>
+    <button class="cta" id="submitForm" style="width:100%" data-t="buton_trimite_form"></button>
+  </div>
+</div>
+
+<!-- Archive -->
+<div class="overlay" id="archiveModal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 data-t="link_arhiva"></h2>
+      <button class="x" data-close="archiveModal" data-t-aria="inchide">✕</button>
+    </div>
+    <div id="archiveList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// ================= CONFIG =================
+var API_URL = 'https://script.google.com/macros/s/AKfycbxCWkQexSi1lQiPlf4WLLXmQ5GQl7gjtqYiLHdCOlkvnpNyzXq0QqRWAigg6B51UhM/exec';
+var MAX_FILE = 8 * 1024 * 1024;
+
+// ================= TEXTE (rezerva; Sheet-ul, tabul Traduceri, are prioritate) =================
+var FALLBACK_T = {
+  titlu_sectiune: {RO:'Misterul lunii', EN:'Monthly Mystery', IT:'Mistero del mese', DE:'Monatsrätsel'},
+  text_explicativ: {
+    RO:'Fiecare școală primește provocarea propusă de școala parteneră și răspunde printr-un scurt video sau câteva fotografii.',
+    EN:'Each school receives the challenge proposed by the partner school and responds with a short video or a few photos.',
+    IT:"Ogni scuola riceve la sfida proposta dalla scuola partner e risponde con un breve video o alcune foto.",
+    DE:'Jede Schule erhält die von der Partnerschule vorgeschlagene Herausforderung und antwortet mit einem kurzen Video oder einigen Fotos.'},
+  zile_ramase: {RO:'zile rămase', EN:'days left', IT:'giorni rimasti', DE:'Tage übrig'},
+  titlu_raspunsuri: {RO:'Răspunsurile lunii, față în față', EN:"This month's answers, side by side", IT:'Le risposte del mese, a confronto', DE:'Antworten des Monats, im Vergleich'},
+  eticheta_voturi: {RO:'voturi', EN:'votes', IT:'voti', DE:'Stimmen'},
+  buton_principal: {RO:'Trimite răspunsul tău', EN:'Submit your answer', IT:'Invia la tua risposta', DE:'Antwort einreichen'},
+  link_arhiva: {RO:'Vezi arhiva completă', EN:'See full archive', IT:"Vedi l'archivio completo", DE:'Gesamtes Archiv ansehen'},
+  camp_nume: {RO:'Nume elev', EN:'Student name', IT:'Nome studente', DE:'Schülername'},
+  camp_clasa: {RO:'Clasa', EN:'Class', IT:'Classe', DE:'Klasse'},
+  camp_scoala: {RO:'Școala ta', EN:'Your school', IT:'La tua scuola', DE:'Deine Schule'},
+  camp_despre: {RO:'Ce cultură ai cercetat?', EN:'Which culture did you research?', IT:'Quale cultura hai ricercato?', DE:'Welche Kultur hast du erforscht?'},
+  camp_media: {RO:'Foto sau video', EN:'Photo or video', IT:'Foto o video', DE:'Foto oder Video'},
+  camp_descriere: {RO:'Descrie ce ai descoperit', EN:'Describe what you found', IT:'Descrivi cosa hai scoperto', DE:'Beschreibe, was du entdeckt hast'},
+  buton_trimite_form: {RO:'Trimite', EN:'Submit', IT:'Invia', DE:'Absenden'},
+  pas1: {RO:'Primești misterul lunii', EN:'Get the monthly mystery', IT:'Ricevi il mistero del mese', DE:'Du erhältst das Monatsrätsel'},
+  pas2: {RO:'Cercetezi cultura unei școli partenere', EN:"Research a partner school's culture", IT:'Ricerca la cultura di una scuola partner', DE:'Erforsche die Kultur einer Partnerschule'},
+  pas3: {RO:'Trimiți o poză sau un video scurt', EN:'Send a photo or a short video', IT:'Invia una foto o un breve video', DE:'Schicke ein Foto oder ein kurzes Video'},
+  gol_titlu: {RO:'Încă nicio poveste din {country}', EN:'No story from {country} yet', IT:'Ancora nessuna storia da {country}', DE:'Noch keine Geschichte aus {country}'},
+  gol_text: {RO:'Răspunsurile aprobate apar aici.', EN:'Approved answers show up here.', IT:'Le risposte approvate compaiono qui.', DE:'Freigegebene Antworten erscheinen hier.'},
+  se_incarca: {RO:'Se încarcă misterul lunii…', EN:'Loading the monthly mystery…', IT:'Caricamento del mistero del mese…', DE:'Das Monatsrätsel wird geladen…'},
+  eroare_titlu: {RO:'Nu am putut încărca datele', EN:"We couldn't load the data", IT:'Non siamo riusciti a caricare i dati', DE:'Die Daten konnten nicht geladen werden'},
+  eroare_text: {RO:'Verifică conexiunea la internet și încearcă din nou.', EN:'Check your internet connection and try again.', IT:'Controlla la connessione a internet e riprova.', DE:'Prüfe deine Internetverbindung und versuche es erneut.'},
+  reincearca: {RO:'Încearcă din nou', EN:'Try again', IT:'Riprova', DE:'Erneut versuchen'},
+  fara_provocare_titlu: {RO:'Următorul mister e pe drum', EN:'The next mystery is on its way', IT:'Il prossimo mistero sta arrivando', DE:'Das nächste Rätsel kommt bald'},
+  fara_provocare_text: {RO:'Nicio provocare publicată încă.', EN:'No challenge published yet.', IT:'Nessuna sfida pubblicata per ora.', DE:'Noch keine Herausforderung veröffentlicht.'},
+  trimis_ok: {RO:'Răspunsul tău a fost trimis. Apare după ce e aprobat de un profesor.', EN:'Your answer was sent. It appears once a teacher approves it.', IT:"La tua risposta è stata inviata. Appare dopo l'approvazione di un insegnante.", DE:'Deine Antwort wurde gesendet. Sie erscheint, sobald eine Lehrkraft sie freigibt.'},
+  eroare_cultura: {RO:'Alege o cultură diferită de școala ta.', EN:"Pick a culture different from your school's.", IT:'Scegli una cultura diversa da quella della tua scuola.', DE:'Wähle eine andere Kultur als die deiner Schule.'},
+  fisier_mare: {RO:'Fișierul e prea mare. Alege unul de maximum 8 MB.', EN:'The file is too big. Choose one up to 8 MB.', IT:'Il file è troppo grande. Scegline uno di massimo 8 MB.', DE:'Die Datei ist zu groß. Wähle eine Datei bis 8 MB.'},
+  nume_obligatoriu: {RO:'Completează numele și clasa.', EN:'Please enter your name and class.', IT:'Inserisci nome e classe.', DE:'Bitte Name und Klasse eintragen.'},
+  se_trimite: {RO:'Se trimite…', EN:'Sending…', IT:'Invio in corso…', DE:'Wird gesendet…'},
+  arhiva_gol: {RO:'Arhiva e goală deocamdată.', EN:'The archive is empty for now.', IT:"L'archivio è ancora vuoto.", DE:'Das Archiv ist noch leer.'},
+  raspunsuri_arhiva: {RO:'răspunsuri', EN:'answers', IT:'risposte', DE:'Antworten'},
+  inchide: {RO:'Închide', EN:'Close', IT:'Chiudi', DE:'Schließen'}
+};
+
+var COUNTRY_NAME = {
+  RO: {RO:'România', EN:'Romania', IT:'Romania', DE:'Rumänien'},
+  IT: {RO:'Italia', EN:'Italy', IT:'Italia', DE:'Italien'},
+  DE: {RO:'Germania', EN:'Germany', IT:'Germania', DE:'Deutschland'}
+};
+var COUNTRY_VALUE = {RO:'Romania', IT:'Italia', DE:'Germania'}; // ce se scrie in Sheet
+var COUNTRIES = ['RO','IT','DE'];
+var LANGS = ['RO','EN','IT','DE'];
+
+// ================= STARE =================
+var currentLang = 'RO';
+try { var sv = localStorage.getItem('tt_lang'); if (LANGS.indexOf(sv) > -1) currentLang = sv; } catch(e){}
+var voted = {};
+try { voted = JSON.parse(localStorage.getItem('tt_voted') || '{}'); } catch(e){}
+var TR = {};
+var appData = {provocari:[], raspunsuri:[], voturi:[], traduceri:[]};
+var loadState = 'loading'; // loading | ok | error
+var justVoted = null;
+
+// ================= UTILITARE =================
+function $(id){ return document.getElementById(id); }
+function esc(s){ var d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML; }
+function normalize(s){ return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLowerCase(); }
+function safeUrl(u){ u = String(u || '').trim(); return /^https:\/\//i.test(u) ? u : ''; }
+
+function t(key){
+  var v = (TR[key] && TR[key][currentLang]) || (FALLBACK_T[key] && FALLBACK_T[key][currentLang]);
+  return v || key;
+}
+function cname(code){ return COUNTRY_NAME[code][currentLang]; }
+
+function countryCode(s){
+  var x = normalize(s);
+  if (!x) return null;
+  if (x === 'ro' || x.indexOf('rom') === 0 || x.indexOf('rum') === 0) return 'RO';
+  if (x === 'it' || x.indexOf('ital') === 0) return 'IT';
+  if (x === 'de' || x.indexOf('germ') === 0 || x.indexOf('deutsch') === 0 || x.indexOf('allem') === 0) return 'DE';
+  return null;
+}
+
+function flagSVG(code, w, h){
+  w = w || 30; h = h || 20;
+  var body;
+  if (code === 'RO') body = '<rect width="10" height="20" fill="#002B7F"/><rect x="10" width="10" height="20" fill="#FCD116"/><rect x="20" width="10" height="20" fill="#CE1126"/>';
+  else if (code === 'IT') body = '<rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#FFFFFF"/><rect x="20" width="10" height="20" fill="#CE2B37"/>';
+  else if (code === 'DE') body = '<rect width="30" height="7" fill="#111"/><rect y="7" width="30" height="6.5" fill="#DD0000"/><rect y="13.5" width="30" height="6.5" fill="#FFCE00"/>';
+  else body = '<rect width="30" height="20" fill="#C9D3EA"/>';
+  return '<svg class="flag" viewBox="0 0 30 20" width="' + w + '" height="' + h + '" aria-hidden="true">' + body + '</svg>';
+}
+
+function parseDate(s, endOfDay){
+  var m = String(s || '').match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+  if (!m) return null;
+  return endOfDay ? new Date(+m[3], +m[2]-1, +m[1], 23, 59, 59) : new Date(+m[3], +m[2]-1, +m[1], 0, 0, 0);
+}
+
+function driveId(url){
+  var s = String(url || '');
+  var m = s.match(/\/d\/([a-zA-Z0-9_-]+)/) || s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+function toast(msg){
+  var el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ el.classList.remove('show'); }, 5000);
+}
+
+// ================= INCARCARE DATE (JSONP - nu depinde de CORS) =================
+function loadData(){
+  var cbName = 'twintalesCb' + Date.now();
+  var script = document.createElement('script');
+  var timer = setTimeout(function(){ cleanup(); fail(); }, 20000);
+
+  function cleanup(){
+    clearTimeout(timer);
+    try { delete window[cbName]; } catch(e){ window[cbName] = undefined; }
+    if (script.parentNode) script.parentNode.removeChild(script);
+  }
+  function fail(){ loadState = 'error'; render(); }
+
+  window[cbName] = function(data){
+    cleanup();
+    appData = {
+      provocari: data.provocari || [], raspunsuri: data.raspunsuri || [],
+      voturi: data.voturi || [], traduceri: data.traduceri || []
+    };
+    buildTranslationDict(appData.traduceri);
+    loadState = 'ok';
+    render();
+  };
+  script.onerror = function(){ cleanup(); fail(); };
+  script.src = API_URL + '?callback=' + cbName;
+  document.body.appendChild(script);
+}
+
+function buildTranslationDict(rows){
+  var dict = {};
+  rows.forEach(function(row){
+    if (row.Cheie) dict[row.Cheie] = {RO:row.RO, EN:row.EN, IT:row.IT, DE:row.DE};
+  });
+  TR = dict;
+}
+
+// ================= RANDARE =================
+function currentProvocare(){
+  return appData.provocari.length ? appData.provocari[appData.provocari.length - 1] : null;
+}
+
+function applyStatic(){
+  document.querySelectorAll('[data-t]').forEach(function(el){ el.textContent = t(el.getAttribute('data-t')); });
+  document.querySelectorAll('[data-t-aria]').forEach(function(el){ el.setAttribute('aria-label', t(el.getAttribute('data-t-aria'))); });
+}
+
+function renderLangSwitch(){
+  var box = $('langSwitch');
+  box.innerHTML = '';
+  LANGS.forEach(function(l){
+    var b = document.createElement('button');
+    b.textContent = l;
+    b.setAttribute('aria-pressed', l === currentLang ? 'true' : 'false');
+    b.onclick = function(){
+      currentLang = l;
+      try { localStorage.setItem('tt_lang', l); } catch(e){}
+      renderLangSwitch();
+      render();
+    };
+    box.appendChild(b);
+  });
+}
+
+function renderFormOptions(){
+  ['fScoala','fCultura'].forEach(function(id, idx){
+    var sel = $(id), prev = sel.value;
+    sel.innerHTML = COUNTRIES.map(function(c){
+      return '<option value="' + COUNTRY_VALUE[c] + '">' + esc(cname(c)) + '</option>';
+    }).join('');
+    sel.value = prev || COUNTRY_VALUE[COUNTRIES[idx === 0 ? 0 : 1]];
+  });
+}
+
+function renderHero(){
+  var title = $('themeTitle'), lead = $('lead'), desc = $('themeDesc');
+  var deadline = $('deadline');
+  deadline.hidden = true;
+  desc.textContent = '';
+
+  if (loadState === 'loading'){ title.textContent = t('se_incarca'); lead.textContent = ''; return; }
+  if (loadState === 'error'){ title.textContent = t('eroare_titlu'); lead.textContent = t('eroare_text'); return; }
+
+  var prov = currentProvocare();
+  if (!prov){ title.textContent = t('fara_provocare_titlu'); lead.textContent = t('fara_provocare_text'); return; }
+
+  title.textContent = prov.Titlu_Tema || '';
+  lead.textContent = t('text_explicativ');
+  desc.textContent = prov.Descriere || '';
+
+  var start = parseDate(prov.Data_Start, false), end = parseDate(prov.Data_Limita, true);
+  if (start && end){
+    var now = new Date();
+    var days = Math.max(0, Math.ceil((end - now) / 86400000));
+    var pct = Math.min(100, Math.max(0, (now - start) / (end - start) * 100));
+    var unit = t('zile_ramase');
+    if (currentLang !== 'DE') unit = unit.charAt(0).toLowerCase() + unit.slice(1);
+    $('daysChip').textContent = days + ' ' + unit;
+    deadline.hidden = false;
+    $('barFill').style.width = pct.toFixed(0) + '%';
+  }
+}
+
+function voteCount(id){
+  return appData.voturi.filter(function(v){ return String(v.ID_Raspuns) === String(id); }).length;
+}
+
+function storyHTML(r){
+  var id = String(r.ID_Raspuns);
+  var link = safeUrl(r.Link_Media);
+  var isVideo = normalize(r.Tip_Media).indexOf('video') > -1;
+  var did = driveId(link);
+  var media = '<span aria-hidden="true">' + (isVideo ? '🎬' : '📷') + '</span>';
+  if (did) media += '<img loading="lazy" alt="" src="https://drive.google.com/thumbnail?id=' + did + '&sz=w300" onerror="this.style.display=\'none\'">';
+  var thumb = link
+    ? '<a class="thumb' + (isVideo ? ' video' : '') + '" href="' + esc(link) + '" target="_blank" rel="noopener">' + media + '</a>'
+    : '<div class="thumb' + (isVideo ? ' video' : '') + '">' + media + '</div>';
+
+  var author = countryCode(r.Scoala_Autor), about = countryCode(r.Cultura_Cercetata);
+  var route = flagSVG(author, 22, 15);
+  if (about) route += '<svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="#55627F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' + flagSVG(about, 22, 15);
+  var who = [r.Nume_Elev, r.Clasa].filter(Boolean).join(', ');
+  route += '<span>' + esc(who) + '</span>';
+
+  var has = !!voted[id];
+  var count = voteCount(id);
+  return '<article class="story">' + thumb +
+    '<div class="story-body">' +
+      '<div class="route">' + route + '</div>' +
+      '<p class="story-text">' + esc(r.Descriere_Raspuns) + '</p>' +
+      '<button class="vote' + (justVoted === id ? ' pop' : '') + '" data-vote="' + esc(id) + '" aria-pressed="' + (has ? 'true' : 'false') + '">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+        '<span>' + count + ' ' + esc(t('eticheta_voturi')) + '</span>' +
+      '</button>' +
+    '</div></article>';
+}
+
+function renderCountries(){
+  var box = $('countries');
+
+  if (loadState === 'loading'){
+    box.innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    return;
+  }
+  if (loadState === 'error'){
+    box.innerHTML = '<div class="panel"><strong>' + esc(t('eroare_titlu')) + '</strong><p>' + esc(t('eroare_text')) + '</p><button class="cta" style="box-shadow:none" id="retryBtn">' + esc(t('reincearca')) + '</button></div>';
+    $('retryBtn').onclick = function(){ loadState = 'loading'; render(); loadData(); };
+    return;
+  }
+
+  var prov = currentProvocare();
+  var list = appData.raspunsuri.filter(function(r){
+    var okProv = !prov || !r.ID_Provocare || String(r.ID_Provocare) === String(prov.ID_Provocare);
+    return okProv && normalize(r.Status) === 'publicat';
+  });
+
+  box.innerHTML = COUNTRIES.map(function(code){
+    var mine = list.filter(function(r){ return countryCode(r.Scoala_Autor) === code; });
+    var body = mine.length
+      ? '<div class="stories">' + mine.map(storyHTML).join('') + '</div>'
+      : '<div class="empty"><div class="ico" aria-hidden="true">✈️</div><strong>' + esc(t('gol_titlu').replace('{country}', cname(code))) + '</strong><span>' + esc(t('gol_text')) + '</span></div>';
+    return '<section class="country c-' + code + '"><div class="stripe"></div>' +
+      '<div class="country-head">' + flagSVG(code, 34, 23) + '<h3>' + esc(cname(code)) + '</h3><span class="count">' + mine.length + '</span></div>' +
+      body + '</section>';
+  }).join('');
+
+  box.querySelectorAll('[data-vote]').forEach(function(btn){
+    btn.onclick = function(){ vote(btn.getAttribute('data-vote')); };
+  });
+  justVoted = null;
+}
+
+function renderArchive(){
+  var box = $('archiveList');
+  if (loadState !== 'ok' || !appData.provocari.length){ box.innerHTML = '<p>' + esc(t('arhiva_gol')) + '</p>'; return; }
+  box.innerHTML = appData.provocari.slice().reverse().map(function(p){
+    var n = appData.raspunsuri.filter(function(r){
+      return (!r.ID_Provocare || String(r.ID_Provocare) === String(p.ID_Provocare)) && normalize(r.Status) === 'publicat';
+    }).length;
+    return '<div class="archive-item"><strong>' + esc(p.Titlu_Tema) + '</strong><span>' + esc(p.Luna) + ' · ' + n + ' ' + esc(t('raspunsuri_arhiva')) + '</span></div>';
+  }).join('');
+}
+
+function render(){
+  document.documentElement.lang = currentLang.toLowerCase();
+  applyStatic();
+  renderFormOptions();
+  renderHero();
+  renderCountries();
+  renderArchive();
+}
+
+// ================= ACTIUNI =================
+function postToScript(body){
+  return fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(body)
+  });
+}
+
+function vote(id){
+  if (voted[id]) return;
+  voted[id] = 1;
+  try { localStorage.setItem('tt_voted', JSON.stringify(voted)); } catch(e){}
+  appData.voturi.push({ID_Raspuns: id});
+  justVoted = id;
+  renderCountries();
+  postToScript({type:'vot', idRaspuns:id, votantNume:'Anonim', votantScoala:'Necunoscuta', scor:1, comentariu:''});
+}
+
+function openModal(id){ $(id).classList.add('open'); }
+function closeModal(id){ $(id).classList.remove('open'); }
+
+$('openForm').onclick = function(){ $('formMsg').textContent = ''; openModal('formModal'); };
+$('openArchive').onclick = function(){ openModal('archiveModal'); };
+document.querySelectorAll('[data-close]').forEach(function(b){ b.onclick = function(){ closeModal(b.getAttribute('data-close')); }; });
+document.querySelectorAll('.overlay').forEach(function(o){ o.addEventListener('click', function(e){ if (e.target === o) o.classList.remove('open'); }); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(function(o){ o.classList.remove('open'); }); });
+
+$('submitForm').onclick = function(){
+  var btn = this, msg = $('formMsg');
+  var nume = $('fNume').value.trim(), clasa = $('fClasa').value.trim();
+  var own = $('fScoala').value, about = $('fCultura').value;
+  var file = $('fMedia').files[0];
+
+  if (!nume || !clasa){ msg.textContent = t('nume_obligatoriu'); return; }
+  if (own === about){ msg.textContent = t('eroare_cultura'); return; }
+  if (file && file.size > MAX_FILE){ msg.textContent = t('fisier_mare'); return; }
+  msg.textContent = '';
+  btn.disabled = true;
+  btn.textContent = t('se_trimite');
+
+  var prov = currentProvocare();
+  function send(b64, fileName, tip){
+    postToScript({
+      type: 'raspuns',
+      idProvocare: prov ? prov.ID_Provocare : '',
+      numeElev: nume, clasa: clasa,
+      scoalaAutor: own, culturaCercetata: about,
+      tipMedia: tip, descriereRaspuns: $('fDescriere').value.trim(),
+      mediaBase64: b64, mediaFileName: fileName
+    }).then(function(){
+      $('fNume').value = ''; $('fClasa').value = ''; $('fDescriere').value = ''; $('fMedia').value = '';
+      closeModal('formModal');
+      btn.disabled = false;
+      btn.textContent = t('buton_trimite_form');
+      toast(t('trimis_ok'));
+    }).catch(function(){
+      btn.disabled = false;
+      btn.textContent = t('buton_trimite_form');
+      msg.textContent = t('eroare_text');
+    });
+  }
+
+  if (file){
+    var reader = new FileReader();
+    reader.onload = function(){ send(reader.result, file.name, file.type.indexOf('video') > -1 ? 'video' : 'foto'); };
+    reader.readAsDataURL(file);
+  } else {
+    send('', '', '');
+  }
+};
+
+// ================= START =================
+renderLangSwitch();
+render();
+loadData();
+</script>
+</body>
+</html>
